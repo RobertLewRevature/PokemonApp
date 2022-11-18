@@ -14,6 +14,7 @@ namespace PokemonApp
             defense = 43;
             speed = 65;
             moves = new string[] { "Scratch", "", "", "" };
+            Damagable();
         }
 
         public void Damagable()
