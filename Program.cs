@@ -1,4 +1,6 @@
-﻿namespace PokemonApp;
+﻿using System.Text.RegularExpressions;
+
+namespace PokemonApp;
 class Program
 {
     static void Main(string[] args)
@@ -217,13 +219,14 @@ class Program
     private static bool Quit()
     {
         bool quit = true;
+        Regex rg = new Regex(@"q", RegexOptions.IgnoreCase);
         do
         {
             Console.WriteLine("Type \"q\" to quit or hit any key to play again.");
             // isPlaying = String.Equals(Console.ReadLine(), "y", StringComparison.OrdinalIgnoreCase) ? true : false;
 
             string? keepPlaying = Console.ReadLine();
-            quit = String.Equals(keepPlaying, "q", StringComparison.OrdinalIgnoreCase);
+            quit = rg.Match(keepPlaying).Success;
             if (quit)
             {
                 return false;
