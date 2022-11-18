@@ -210,7 +210,7 @@ class Program
         int power = moves[attacker.moves[0]];
         float advantage = TypeAdvantage(attacker, defender);
 
-        int damage = ((int)(((int)((int)((((int)((2 * attacker.level)/5) + 2) * power * attacker.attack) / defender.defense) / 50) + 2) * 1.5 * advantage) * rand.Next(217, 256)) / 255;
+        int damage = ((int)(((int)((int)((((int)((2 * attacker.level)/5) + 2) * power * attacker.attack) / defender.defense) / 50) + 2) * advantage) * rand.Next(217, 256)) / 255;
 
         Console.WriteLine($"{damage} dealt");
 
