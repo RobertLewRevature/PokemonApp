@@ -1,4 +1,4 @@
-namespace pokemonappv1
+namespace PokemonApp
 {
     public enum PokeNames
     {
