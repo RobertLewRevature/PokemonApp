@@ -1,6 +1,6 @@
 namespace PokemonApp
 {
-    class Bulbasaur : Pokemon
+    class Bulbasaur : Pokemon, IDamagable
     {
         public Bulbasaur(int lvl)
         {
@@ -14,6 +14,11 @@ namespace PokemonApp
             // defense = 81;
             speed = 45;
             moves = new string[] { "Tackle", "", "", "" };
+        }
+
+        public void Damagable()
+        {
+            isDamagable = true;
         }
     }
 }

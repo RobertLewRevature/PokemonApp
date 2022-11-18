@@ -1,6 +1,6 @@
 namespace PokemonApp
 {
-    class Squirtle : Pokemon
+    class Squirtle : Pokemon, IDamagable
     {
         public Squirtle(int lvl)
         {
@@ -13,6 +13,11 @@ namespace PokemonApp
             defense = 65;
             speed = 43;
             moves = new string[] { "Tackle", "", "", "" };
+        }
+
+        public void Damagable()
+        {
+            isDamagable = true;
         }
     }
 }
