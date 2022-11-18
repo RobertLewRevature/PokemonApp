@@ -1,69 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace pokemonappv1;
+namespace PokemonApp;
 class Program
 {
     static void Main(string[] args)
-    {        
+    {
+        
+        Random rand = new Random();
+
+        // int damage = ((int)(((int)((int)((((int)((2 * 73)/5) + 2) * 40 * 187) / 81) / 50) + 2) * 1.5 * 2 * 1) * rand.Next(217, 256)) / 255;
+        
+        // System.Console.WriteLine(damage);
+       
+        PlayGame();
+    }
+
+    static void PlayGame()
+    {
         // Fields
         Random rand = new Random();
 
-        List<Pokemon> pokemonList = new List<Pokemon>();
-        pokemonList.Add(new Pokemon(PokeNames.Bulbasaur.ToString(), Types.GRASS.ToString(), 10, (int)PokeNames.Bulbasaur, 29, 1));
-        pokemonList.Add(new Pokemon(PokeNames.Charmander.ToString(), Types.FIRE.ToString(), 10, (int)PokeNames.Charmander, 19, 1));
-        pokemonList.Add(new Pokemon(PokeNames.Squirtle.ToString(), Types.WATER.ToString(), 10, (int)PokeNames.Squirtle, 20, 1));
+        // Dictionary of Moves
+        Dictionary<string, int> moveList = new Dictionary<string, int>();
+        moveList.Add("Tackle", 35);
+        moveList.Add("Scratch", 40);
 
         bool isPlaying = false;
 
         do
         {
+            // Player welcome
             Console.WriteLine("It's time to have a Pokemon battle!");
             Console.WriteLine("Choose your Pokemon:");
-            
-            Pokemon userPokemon = CheckChoice(pokemonList);
-            userPokemon.IsPokemon();
 
-            Pokemon compPokemon = pokemonList[rand.Next(0,3)];
+            // Pokemon selection
+            Pokemon userPokemon = ValidatePlayerChoice();
+            // Pokemon userPokemon = new Charmander(73);
+            userPokemon.IsPokemon();
+            Pokemon compPokemon = ComputerSelection(rand);
+            // Pokemon compPokemon = new Bulbasaur(5);
             compPokemon.IsPokemon();
 
-            if (BattleResult(userPokemon, compPokemon))
-            {
-                Console.WriteLine("You won!");
-            }
-            else if (BattleResult(compPokemon, userPokemon))
-            {
-                Console.WriteLine("You lost........");
-            }
-            else
-            {
-                Console.WriteLine("It's a draw");
-            }
+            BattleLoop(moveList, userPokemon, compPokemon, rand);
+            // isPlaying = TestBattle(moveList, userPokemon, compPokemon, rand);
 
-            bool y = false;
-            bool n = false;
-            do
-            {
-                Console.WriteLine("Would you like to play again?");
-                Console.WriteLine("please enter:\n\ty\n\tn");
-                // isPlaying = String.Equals(Console.ReadLine(), "y", StringComparison.OrdinalIgnoreCase) ? true : false;
-                
-                string? keepPlaying = Console.ReadLine();
-                y = String.Equals(keepPlaying, "y", StringComparison.OrdinalIgnoreCase);
-                n = String.Equals(keepPlaying, "n", StringComparison.OrdinalIgnoreCase);
-                if (y)
-                {
-                    isPlaying = true;
-                }
-                else
-                {
-                    isPlaying = false;
-                }
-            } while (!y && !n);
+            isPlaying = Quit();
         } while (isPlaying);
     }
 
-    public static Pokemon CheckChoice(List<Pokemon> pokeList)
+    static Pokemon ValidatePlayerChoice()
     {
         bool success = false;
         string? pokeName = "";
@@ -83,15 +69,19 @@ class Program
             }
 
             // Choice validation
-            foreach (Pokemon pokemon in pokeList)
+            if (String.Equals(pokeName, PokeNames.Bulbasaur.ToString(), StringComparison.OrdinalIgnoreCase))
             {
-                if (String.Equals(pokeName, pokemon.name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return pokemon;
-                }
+                return new Bulbasaur(5);
             }
-            
-            if (!pokeList.Contains(new Pokemon { name = pokeName }))
+            else if (String.Equals(pokeName, PokeNames.Charmander.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                return new Charmander(5);
+            }
+            else if (String.Equals(pokeName, PokeNames.Squirtle.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                return new Squirtle(5);
+            }
+            else
             {
                 Console.WriteLine("Invalid Choice. Please choose again:");
                 success = false;
@@ -100,15 +90,148 @@ class Program
 
         } while (!success);
 
-        return new Pokemon();
+        return null;
     }
 
-    public static bool BattleResult(Pokemon p1, Pokemon p2)
+    static Pokemon ComputerSelection(Random rand)
     {
+        int compNum = rand.Next(0, 99) % 3;
+        switch (compNum)
+        {
+            case 0:
+                return new Bulbasaur(5);
+            case 1:
+                return new Charmander(5);
+            case 2:
+                return new Squirtle(5);
+            default:
+                return null;
+        }
+        
+    }
+
+    static float TypeAdvantage(Pokemon p1, Pokemon p2)
+    {
+        float type = 1.0f;
         bool waterWins = String.Equals(p1.type, Types.WATER.ToString()) && String.Equals(p2.type, Types.FIRE.ToString());
         bool fireWins = String.Equals(p1.type, Types.FIRE.ToString()) && String.Equals(p2.type, Types.GRASS.ToString());
         bool grassWins = String.Equals(p1.type, Types.GRASS.ToString()) && String.Equals(p2.type, Types.WATER.ToString());
+
+        if (waterWins || fireWins || grassWins)
+        {
+            type = 2.0f;
+        }
+        else if (!waterWins || !fireWins || !grassWins)
+        {
+            type = 0.5f;
+        }
         
-        return waterWins || fireWins || grassWins;
+        return type;
+    }
+
+    static void BattleLoop(Dictionary<string, int> moves, Pokemon player, Pokemon comp, Random rand)
+    {
+        int playerInitiative = rand.Next(1, 21) + player.speed;
+        int compInitiative = rand.Next(1, 21) + comp.speed;
+        bool isPlayerFirst = playerInitiative > compInitiative ? true : false;
+
+        bool fighting = true;
+
+        while(fighting)
+        {
+            if (isPlayerFirst)
+            {
+                // Player's turn
+                Console.WriteLine($"Player's {player.name}'s turn.");
+                fighting = TurnLogic(moves, player, comp, rand);
+                if (!fighting) break;
+
+                // Computer's turn
+                Console.WriteLine($"Computer's {comp.name}'s turn.");
+                fighting = TurnLogic(moves, comp, player, rand);
+                if (!fighting) break;
+            }
+            else
+            {
+                // Computer's turn
+                Console.WriteLine($"Computer's {comp.name}'s turn.");
+                fighting = TurnLogic(moves, comp, player, rand);
+                if (!fighting) break;
+
+                // Player's turn
+                Console.WriteLine($"Player's {player.name}'s turn.");
+                fighting = TurnLogic(moves, player, comp, rand);
+                if (!fighting) break;
+            }
+        }
+    }
+
+    /*
+    static bool TestBattle(Dictionary<string, int> moves, Pokemon player, Pokemon comp, Random rand)
+    {
+        bool stillFighting = true;
+        for (int i = 0; i < 10; ++i)
+        {
+            // Player's turn
+                Console.WriteLine($"Player's {player.name}'s turn.");
+                stillFighting = TurnLogic(moves, player, comp, rand);
+                if (!stillFighting) return false;
+
+                // Computer's turn
+                Console.WriteLine($"Computer's {comp.name}'s turn.");
+                TurnLogic(moves, comp, player, rand);
+                if (!stillFighting) return false;
+        }
+        return stillFighting;
+    }
+    */
+
+    static bool TurnLogic(Dictionary<string, int> moves, Pokemon poke1, Pokemon poke2, Random rand)
+    {
+        Console.Write("Press any key to continue:");
+        Console.ReadLine();
+
+        poke2.TakeDamage(CalculateDamage(moves, poke1, poke2, rand));
+
+        if (poke2.hitpoints <= 0)
+        {
+            Console.WriteLine($"Enemy {poke2.name} has fainted\n");
+            return false;
+        }
+
+        Console.WriteLine();
+
+        return true;
+    }
+
+    static int CalculateDamage(Dictionary<string, int> moves, Pokemon attacker, Pokemon defender, Random rand)
+    {
+        // Initial values;
+        int power = moves[attacker.moves[0]];
+        float advantage = TypeAdvantage(attacker, defender);
+
+        int damage = ((int)(((int)((int)((((int)((2 * attacker.level)/5) + 2) * power * attacker.attack) / defender.defense) / 50) + 2) * 1.5 * advantage) * rand.Next(217, 256)) / 255;
+
+        Console.WriteLine($"{damage} dealt");
+
+        return damage;
+    }
+
+    private static bool Quit()
+    {
+        bool quit = true;
+        do
+        {
+            Console.WriteLine("Type \"q\" to quit or hit any key to play again.");
+            // isPlaying = String.Equals(Console.ReadLine(), "y", StringComparison.OrdinalIgnoreCase) ? true : false;
+
+            string? keepPlaying = Console.ReadLine();
+            quit = String.Equals(keepPlaying, "q", StringComparison.OrdinalIgnoreCase);
+            if (quit)
+            {
+                return false;
+            }
+        } while (quit);
+        return true;
     }
 }
