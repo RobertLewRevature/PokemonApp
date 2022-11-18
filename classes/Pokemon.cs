@@ -5,15 +5,16 @@ namespace PokemonApp
         //Fields
 
         //Fields are private by default. This field was explicitly declared private.
-        public string name { get; set; }
-        public string type { get; set; }
+        public string name { get; set; } = "";
+        public string type { get; set; } = "";
         public int dexNumber {get; set;}
         public int level { get; set; }
         public int hitpoints { get; set; }
         public int attack { get; set; }      
         public int defense { get; set; }
         public int speed { get; set; }
-        public string[] moves { get; set; }
+        public string[] moves { get; set; } = { "", "", "", "" };
+        protected bool isDamagable = false;
 
         //Constructors - Special methods used to instantiate or "create" an instance of a class.
         //You can have as many constructors as you need provided the signatures are different. 
@@ -49,14 +50,17 @@ namespace PokemonApp
         {
             return $"My name is {name}, number {dexNumber}. I'm a {type} type pokemon.";
         }
-        */      
-        
+        */
+
         public void TakeDamage(int damage)
         {
-            hitpoints -= damage;
-            if (hitpoints < 0) hitpoints = 0;
+            if (isDamagable)
+            {
+                hitpoints -= damage;
+                if (hitpoints < 0) hitpoints = 0;
 
-            Console.WriteLine($"The enemy's {name} has {hitpoints} left");
+                Console.WriteLine($"The enemy's {name} has {hitpoints} left");
+            }
         }
     }
 }

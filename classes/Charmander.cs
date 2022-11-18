@@ -1,6 +1,6 @@
 namespace PokemonApp
 {
-    class Charmander : Pokemon
+    class Charmander : Pokemon, IDamagable
     {
         public Charmander(int lvl)
         {
@@ -14,6 +14,11 @@ namespace PokemonApp
             defense = 43;
             speed = 65;
             moves = new string[] { "Scratch", "", "", "" };
+        }
+
+        public void Damagable()
+        {
+            isDamagable = true;
         }
     }
 }
