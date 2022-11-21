@@ -35,10 +35,12 @@ class Program
 
             // Pokemon selection
             Pokemon userPokemon = ValidatePlayerChoice();
-            // Pokemon userPokemon = new Charmander(73);
-            userPokemon.IsPokemon();
             Pokemon compPokemon = ComputerSelection(rand);
+            // Pokemon userPokemon = new Bulbasaur(5);
             // Pokemon compPokemon = new Bulbasaur(5);
+
+            // Display stats
+            userPokemon.IsPokemon();
             compPokemon.IsPokemon();
 
             BattleLoop(moveList, userPokemon, compPokemon, rand);

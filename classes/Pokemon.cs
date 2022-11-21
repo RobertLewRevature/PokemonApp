@@ -61,7 +61,8 @@ namespace PokemonApp
                 Console.WriteLine($"{damage} dealt");
 
                 if (hitpoints < 0) hitpoints = 0;
-
+                
+                Console.WriteLine($"{damage} dealt");
                 Console.WriteLine($"The enemy's {name} has {hitpoints} left");
             }
             else
