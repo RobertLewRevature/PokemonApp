@@ -111,7 +111,7 @@ class Program
 
     static float TypeAdvantage(Pokemon p1, Pokemon p2)
     {
-        float type = 1.0f;
+        float type = 0.5f;
         bool waterWins = String.Equals(p1.type, Types.WATER.ToString()) && String.Equals(p2.type, Types.FIRE.ToString());
         bool fireWins = String.Equals(p1.type, Types.FIRE.ToString()) && String.Equals(p2.type, Types.GRASS.ToString());
         bool grassWins = String.Equals(p1.type, Types.GRASS.ToString()) && String.Equals(p2.type, Types.WATER.ToString());
@@ -120,10 +120,12 @@ class Program
         {
             type = 2.0f;
         }
-        else if (!waterWins || !fireWins || !grassWins)
+        else if (String.Equals(p1.type, p2.type))
         {
-            type = 0.5f;
+            type = 1.0f;
         }
+
+        Console.WriteLine(type);
         
         return type;
     }
@@ -210,8 +212,6 @@ class Program
         float advantage = TypeAdvantage(attacker, defender);
 
         int damage = ((int)(((int)((int)((((int)((2 * attacker.level)/5) + 2) * power * attacker.attack) / defender.defense) / 50) + 2) * advantage) * rand.Next(217, 256)) / 255;
-
-        Console.WriteLine($"{damage} dealt");
 
         return damage;
     }
